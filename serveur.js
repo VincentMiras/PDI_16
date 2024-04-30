@@ -4,7 +4,8 @@ const fs = require('fs');
 const hostname = '127.0.0.1';
 const port = 3000;
 
-let jsonData = null
+let jsonDataM= null
+let jsonDataI= null
 
 const server = createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -21,7 +22,7 @@ const server = createServer((req, res) => {
         console.log('Données JSON reçues du client :', jsonData);
 
         // Sauvegarder les données dans un fichier sur le serveur
-        saveData(jsonData);
+        saveDataM(jsonData);
 
         res.statusCode = 200;
         res.setHeader('Content-Type', 'text/plain');
@@ -35,11 +36,11 @@ const server = createServer((req, res) => {
     });
   } else if (req.method === 'GET' && req.url === '/getDeplacementM') {
     try {
-      console.log('Données JSON reçues du client :', JSON.parse(jsonData));
+      console.log('Données JSON reçues du client :', JSON.parse(jsonDataM));
 
       res.statusCode = 200;
       res.setHeader('Content-Type', 'text/plain');
-      res.end(jsonData);
+      res.end(jsonDataM);
     } catch (error) {
       console.error('Erreur lors de l\'analyse du JSON :', error);
       res.statusCode = 400;
@@ -58,7 +59,7 @@ const server = createServer((req, res) => {
           console.log('Données JSON reçues du client :', jsonData);
   
           // Sauvegarder les données dans un fichier sur le serveur
-          saveData(jsonData);
+          saveDataI(jsonData);
   
           res.statusCode = 200;
           res.setHeader('Content-Type', 'text/plain');
@@ -95,6 +96,10 @@ server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 
-function saveData(data) {
-  jsonData = JSON.stringify(data);
+function saveDataM(data) {
+  jsonDataM = JSON.stringify(data);
+}
+
+function saveDataI(data) {
+  jsonDataI = JSON.stringify(data);
 }
