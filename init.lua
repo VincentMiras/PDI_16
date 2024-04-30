@@ -59,10 +59,10 @@ if file then
     -- Analyser le contenu JSON
     local data = json_decode(content)
     echelle = data.echelle
-    local zcno = data.coordinatesCarto[1][1]
-    local xcno = data.coordinatesCarto[1][2]
-    local zcse = data.coordinatesCarto[3][1]
-    local xcse = data.coordinatesCarto[3][2]
+    zcno = data.coordinatesCarto[1][1]
+    xcno = data.coordinatesCarto[1][2]
+    zcse = data.coordinatesCarto[3][1]
+    xcse = data.coordinatesCarto[3][2]
     y0 = data.altitudeZero
     cx = (xcno+xcse)/2
     cz = (zcno+zcse)/2
@@ -84,11 +84,15 @@ local function update_player_position(player)
     local data = {
         position = position,
         yaw = yaw,
-        pitch = pitch
+        pitch = pitch,
+        xmin = xcno,
+        xmax = xcse,
+        ymin = zcno,
+        ymax = zcse
     }
     
     if http then
-        local url = "https://127.0.0.1:3000/data"
+        local url = "http://127.0.0.1:3000/data"
         local timeout = 10  -- Temps d'attente maximal en secondes
     
         -- Convertir l'objet JSON en chaîne
@@ -159,36 +163,5 @@ minetest.register_globalstep(function(dtime)
     end
 end)
 
-
--- /*
--- local http = minetest.request_http_api()
-
--- if http then
---     local url = "https://127.0.0.1:3000/data"
---     local timeout = 10  -- Temps d'attente maximal en secondes
-
---     -- Convertir l'objet JSON en chaîne
---     local body = minetest.write_json(data)
-
---     http.fetch({
---         url = url,
---         timeout = timeout,
---         method = "POST",
---         headers = {
---             ["Content-Type"] = "application/json",
---         },
---         data = body,  -- Envoyer les données JSON directement
---     }, function(success, response)
---         if success then
---             print("Réponse du serveur :")
---         else
---             print("Échec de la requête :")
---         end
---     end)
--- else
---     print("L'API HTTP n'est pas disponible.")
--- end
--- end
--- */
 
 
