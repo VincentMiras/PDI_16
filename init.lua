@@ -70,7 +70,7 @@ else
     minetest.after(1, minetest.chat_send_all, "Impossible d'ouvrir le fichier.")
 end
 
-local deplacement_minetest = true -- Utilisez la première lettre en minuscule pour true
+local deplacement_minetest = true
 
 -- Tableau pour stocker le dernier moment où la position a été mise à jour pour chaque joueur
 local last_update_time = {}
@@ -92,7 +92,7 @@ local function update_player_position(player)
     }
     
     if http then
-        local url = "http://127.0.0.1:3000/data"
+        local url = "http://127.0.0.1:3000/postDeplacementM"
         local timeout = 10  -- Temps d'attente maximal en secondes
     
         -- Convertir l'objet JSON en chaîne
