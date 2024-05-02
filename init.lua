@@ -20,9 +20,9 @@ local function read_position_from_json(filename)
         local data = json_decode(content)
         if data then
             -- Stocker les valeurs dans des variables locales
-            local x = data.position.x - cx
+            local x = (data.position.x - cx) * echelle
             local y = (data.position.y + y0) * echelle
-            local z = data.position.z - cz
+            local z = (data.position.z - cz) * echelle
             -- Retourner les valeurs lues
             return x, y, z
         else

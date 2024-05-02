@@ -8,13 +8,41 @@ itowns.proj4.defs(
 );
 // const coords = [669277.3032234103,670301.3032234103,6859450.014931593,6860474.014931593]
 // coords.setFromValues(0,0,0)
-const viewExtent = new itowns.Extent(
-    'EPSG:2154',
-    669277.3032234103,670301.3032234103,
-    6859450.014931593,6860474.014931593,  
-    // 644500.0, 659499.99,
-    // 6857500.0, 6867499.99,
-);
+let Xmin = 0;
+let Xmax = 0;
+let Ymin = 0;
+let Ymax = 0;
+
+function prendreEmprise() {
+    fetch('http://127.0.0.1:3000/getDeplacementM')
+        .then(response => response.json())
+        .then(data => {
+            // Stocker les données du fichier JSON dans la variable globale
+            Xmin = data.xmin;
+            Ymin = data.ymin;
+            Xmax = data.xmax;
+            Ymax = data.ymax;
+            console.log(Xmin,Xmax,Ymin,Ymax);
+            
+        })
+        .catch(error => {
+            console.error('Erreur lors de la création de la carte:', error);
+        });
+}
+
+prendreEmprise();
+
+
+
+// attendre prendreEmprise()
+setTimeout(() => {
+    console.log(Xmin, Xmax, Ymin, Ymax);
+
+    viewExtent = new itowns.Extent(
+        'EPSG:2154',
+        Xmax, Xmin,
+        Ymin, Ymax
+    );
 
 // Define the camera initial placement
 const placement = {
@@ -52,33 +80,96 @@ const sourceDEM = new itowns.WMSSource({
 });
 // Create the dem ElevationLayer and add it to the view
 const layerDEM = new itowns.ElevationLayer('DEM', { source: sourceDEM });
-view.addLayer(layerDEM);    
-
-view.camera3D.position.set(669277.3032234103, 6859450.014931593, 100)
-
-let tab = [];
-let minColonneX = 0;
-let minColonneY = 0;
+view.addLayer(layerDEM);
 
 // Fonction pour charger et afficher les données du fichier JSON
 function chargerEtAfficherDonnees() {
     // Charger le fichier JSON
-    fetch('geometry.dat')
+    fetch('http://127.0.0.1:3000/getDeplacementM')
         .then(response => response.json())
         .then(data => {
             // Stocker les données du fichier JSON dans la variable globale
-            tab = data.coordinatesCarto;
-            minColonneX = Math.min(...tab.map(coordonnee => coordonnee[0]));
-            minColonneY = Math.min(...tab.map(coordonnee => coordonnee[1]));
+            deplacement_minetest = data.deplacement_minetest;
+            Xmin = data.xmin;
+            Ymin = data.ymin;
+            Xmax = data.xmax;
+            Ymax = data.ymax;
+
+            yaw =data.yaw*Math.PI/180;
+            pitch =data.pitch*Math.PI/180;
+            roll = 0;
+            rota = new THREE.Euler(yaw, pitch, roll, 'ZYX');
+            view.camera3D.setRotationFromEuler(rota);
+            
+            //on suppose qu'il faut tourner la caméra car on pointe sur la map quand on regarde l'horizon sur le jeu
+            view.camera3D.rotateX(Math.PI/2);
+            //view.camera3D.rotateY(Math.PI/2);
+            //view.camera3D.rotateZ(Math.PI/2);
+            
+            // cliquer pour voir la rotation dans la console
+            viewerDiv.addEventListener('click', function() {
+                // Code à exécuter lorsque l'événement de clic se produit
+                console.log(view.camera3D.position);
+                console.log(view.camera3D.rotation);
+            });
+
+            posz = data.position.y;
+            posx = data.position.x;
+            posy = data.position.z;
+
+            pospre = view.camera3D.position;
+            tranx = posx - pospre.x;
+            trany = posy - pospre.y;
+            tranz = posz - pospre.z;
+            
+            tran = new THREE.Vector3(tranx, trany, tranz);
            
+            view.camera3D.position.addVectors(pospre, tran);
+            
+            view.notifyChange(view.camera3D)    
         })
         .catch(error => {
             console.error('Erreur lors de la lecture du fichier JSON:', error);
         });
-}
+    }
 
-// Afficher les données initiales au chargement de la page
 chargerEtAfficherDonnees();
 
+// Mettre à jour automatiquement les données toutes les 100 msecondes
+setInterval(chargerEtAfficherDonnees, 100);
+
+
+
+// Fonction pour charger et afficher les données du fichier JSON en utilisant une requête POST
+function posterDonnees() {
+    // Configurer les données à envoyer dans la requête POST
+    const pData = {
+        x:view.camera3D.position.x,
+        y:view.camera3D.position.y,
+        z:view.camera3D.position.z
+    };
+
+    // Configuration de la requête fetch avec la méthode POST et les données
+    fetch('http://127.0.0.1:3000/postDeplacementI', {
+        method: 'POST', // Spécifier la méthode POST
+        headers: {
+            'Content-Type': 'application/json' // Indiquer le type de contenu JSON
+        },
+        mode: 'no-cors',
+        body: JSON.stringify(pData) // Convertir les données en format JSON pour le corps de la requête
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Données JSON post sur le serveur :', data);
+    })
+    .catch(error => {
+        console.error('Erreur lors du post du fichier JSON:', error);
+    });
+}
+
+// Modification des données dans le serveur
+posterDonnees();
+
 // Mettre à jour automatiquement les données toutes les 5 secondes
-setInterval(chargerEtAfficherDonnees, 3000);
+setInterval(posterDonnees, 3000);
+}, 1000);

@@ -21,7 +21,6 @@ const server = createServer((req, res) => {
         const jsonData = JSON.parse(body);
         console.log('Données JSON reçues du client :', jsonData);
 
-        // Sauvegarder les données dans un fichier sur le serveur
         saveDataM(jsonData);
 
         res.statusCode = 200;
@@ -57,8 +56,7 @@ const server = createServer((req, res) => {
         try {
           const jsonData = JSON.parse(body);
           console.log('Données JSON reçues du client :', jsonData);
-  
-          // Sauvegarder les données dans un fichier sur le serveur
+
           saveDataI(jsonData);
   
           res.statusCode = 200;
@@ -72,20 +70,18 @@ const server = createServer((req, res) => {
         }
       });
   } else if (req.method === 'GET' && req.url === '/getDeplacementI') {
-    // Renvoyer le contenu du fichier JSON sauvegardé sur le serveur en réponse à la requête GET
-    fs.readFile('data.json', (err, data) => {
-      if (err) {
-        console.error('Erreur lors de la lecture du fichier JSON :', err);
-        res.statusCode = 500;
-        res.setHeader('Content-Type', 'text/plain');
-        res.end('Erreur lors de la lecture du fichier JSON');
-      } else {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.end(data);
-      }
-      });
-  } else {
+    try {
+      console.log('Données JSON reçues du client :', JSON.parse(jsonDataI))
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/plain');
+      res.end(jsonDataI);
+    } catch (error) {
+      console.error('Erreur lors de l\'analyse du JSON :', error);
+      res.statusCode = 400;
+      res.setHeader('Content-Type', 'text/plain');
+      res.end('Erreur lors de l\'analyse du JSON');
+    }
+  }else {
     res.statusCode = 404;
     res.setHeader('Content-Type', 'text/plain');
     res.end('Page non trouvée');
