@@ -88,7 +88,8 @@ local function update_player_position(player)
         xmin = xcno,
         xmax = xcse,
         ymax = zcno,
-        ymin = zcse
+        ymin = zcse,
+        deplacement_minetest = deplacement_minetest
     }
     
     if http then

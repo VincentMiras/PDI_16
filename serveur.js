@@ -19,7 +19,7 @@ const server = createServer((req, res) => {
     req.on('end', () => {
       try {
         const jsonData = JSON.parse(body);
-        console.log('Données JSON reçues du client :', jsonData);
+        console.log('Données JSON reçues du client Minetest :', jsonData);
 
         saveDataM(jsonData);
 
@@ -35,8 +35,6 @@ const server = createServer((req, res) => {
     });
   } else if (req.method === 'GET' && req.url === '/getDeplacementM') {
     try {
-      console.log('Données JSON reçues du client :', JSON.parse(jsonDataM));
-
       res.statusCode = 200;
       res.setHeader('Content-Type', 'text/plain');
       res.end(jsonDataM);
@@ -55,10 +53,8 @@ const server = createServer((req, res) => {
       req.on('end', () => {
         try {
           const jsonData = JSON.parse(body);
-          console.log('Données JSON reçues du client :', jsonData);
-
+          console.log('Données JSON reçues du client ITowns:', jsonData);
           saveDataI(jsonData);
-  
           res.statusCode = 200;
           res.setHeader('Content-Type', 'text/plain');
           res.end('Données JSON reçues et sauvegardées avec succès sur le serveur');
@@ -71,7 +67,6 @@ const server = createServer((req, res) => {
       });
   } else if (req.method === 'GET' && req.url === '/getDeplacementI') {
     try {
-      console.log('Données JSON reçues du client :', JSON.parse(jsonDataI))
       res.statusCode = 200;
       res.setHeader('Content-Type', 'text/plain');
       res.end(jsonDataI);

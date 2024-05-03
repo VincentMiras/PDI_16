@@ -86,8 +86,6 @@ prendreEmprise();
 
 // attendre prendreEmprise()
 setTimeout(() => {
-    console.log(Xmin, Xmax, Ymin, Ymax);
-
 // Fonction pour charger et afficher les données du fichier JSON
 function chargerEtAfficherDonnees() {
     // Charger le fichier JSON
@@ -129,10 +127,10 @@ function chargerEtAfficherDonnees() {
             tranz = posz - pospre.z;
             
             tran = new THREE.Vector3(tranx, trany, tranz);
-           
-            view.camera3D.position.addVectors(pospre, tran);
             
-            view.notifyChange(view.camera3D)    
+            if (deplacement_minetest)
+                view.camera3D.position.addVectors(pospre, tran);
+                view.notifyChange(view.camera3D)    
         })
         .catch(error => {
             console.error('Erreur lors de la lecture du fichier JSON:', error);
@@ -145,7 +143,7 @@ chargerEtAfficherDonnees();
 setInterval(chargerEtAfficherDonnees, 100);
 
 
-
+    
 // Fonction pour charger et afficher les données du fichier JSON en utilisant une requête POST
 function posterDonnees() {
     // Configurer les données à envoyer dans la requête POST
@@ -178,4 +176,4 @@ posterDonnees();
 
 // Mettre à jour automatiquement les données toutes les 5 secondes
 setInterval(posterDonnees, 3000);
-}, 1000);
+}, 100);
