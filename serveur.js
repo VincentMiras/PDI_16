@@ -20,9 +20,7 @@ const server = createServer((req, res) => {
       try {
         const jsonData = JSON.parse(body);
         console.log('Données JSON reçues du client Minetest :', jsonData);
-
         saveDataM(jsonData);
-
         res.statusCode = 200;
         res.setHeader('Content-Type', 'text/plain');
         res.end('Données JSON reçues et sauvegardées avec succès sur le serveur');

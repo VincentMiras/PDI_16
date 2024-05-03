@@ -16,6 +16,13 @@ let Ymax = 0;
 let viewExtent;
 let view;
 
+function extrudeBuildings(properties) {
+    return properties.hauteur;
+}
+
+function altitudeBuildings(properties) {
+    return properties.altitude_minimale_sol;
+}
 function prendreEmprise() {
     fetch('http://127.0.0.1:3000/getDeplacementM')
         .then(response => response.json())
@@ -72,6 +79,30 @@ function prendreEmprise() {
             const layerDEM = new itowns.ElevationLayer('DEM', { source: sourceDEM });
             view.addLayer(layerDEM);
 
+            const sourceM3D = new itowns.WFSSource({
+                url: 'https://data.geopf.fr/wfs/ows?',
+                version: '2.0.0',
+                typeName: 'BDTOPO_V3:batiment',
+                ipr: 'IGN',
+                crs: 'EPSG:2154',
+                extent: viewExtent,
+                format: 'application/json',
+            });
+            
+            
+            const geometryLayer = new itowns.FeatureGeometryLayer('sourceM3D', {
+                batchId: function (property, featureId) { return featureId; },
+                crs: 'EPSG:2154',
+                source: sourceM3D,
+                style: {
+                    fill: {
+                        color: new itowns.THREE.Color(0x808080),
+                        base_altitude: altitudeBuildings,
+                        extrusion_height: extrudeBuildings,
+                    }
+                }});
+            view.addLayer(geometryLayer);
+
             // Autres configurations de vue, création de couches, etc.
         })
         .catch(error => {
@@ -101,7 +132,7 @@ function chargerEtAfficherDonnees() {
 
             yaw =data.yaw*Math.PI/180;
             pitch =data.pitch*Math.PI/180;
-            roll = 180;
+            roll = 0;
             rota = new THREE.Euler(yaw, pitch, roll, 'ZYX');
             view.camera3D.setRotationFromEuler(rota);
             
@@ -128,7 +159,7 @@ function chargerEtAfficherDonnees() {
             
             tran = new THREE.Vector3(tranx, trany, tranz);
             
-            if (deplacement_minetest)
+            if (deplacement_minetest==true)
                 view.camera3D.position.addVectors(pospre, tran);
                 view.notifyChange(view.camera3D)    
         })
