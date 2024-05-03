@@ -10,38 +10,22 @@ end
 
 local http = minetest.request_http_api()
 
--- Fonction pour téléporter un joueur à une position spécifiée
-local function teleport_player(player_name)
-    if http then
-        local url = "http://127.0.0.1:3000/getDeplacementI"
-        local timeout = 10
-        http.fetch({
-            url = url,
-            timeout = timeout,
-            method = "GET",
-            headers = {
-                ["Content-Type"] = "application/json",
-            },
-        }, function(success)
-            if success then
-                local pos_itowns = minetest.parse_json(success.data) 
-                local x = pos_itowns.x
-                local y = pos_itowns.z
-                local z = pos_itowns.y
-                x = (x - cx) * echelle
-                y = (y + y0) * echelle
-                z = (z - cz) * echelle
-                local player = minetest.get_player_by_name(player_name)
-                if deplacement_minetest == false then
-                    player:set_pos({x = x, y = y, z = z})
-                end
-            else
-                minestest.chat_send_all("La requête HTTP a échoué")
-            end
-        end)
-    end
-end
-
+-- Définition de l'item
+minetest.register_craftitem("modsitownsv0:mon_item", {
+    description = "iTowns", -- Description de l'item
+    inventory_image = "iTowns.png", -- Image de l'item (à remplacer par le nom de votre image)
+    on_use = function(itemstack, user, pointed_thing)
+        -- Inversion de l'état de deplacement_minetest
+        deplacement_minetest = not deplacement_minetest
+        
+        -- Envoi d'un message dans le chat pour indiquer le changement d'état
+        if deplacement_minetest then
+            minetest.chat_send_all("Déplacement Minetest activé.")
+        else
+            minetest.chat_send_all("Déplacement Minetest désactivé.")
+        end
+    end,
+})
 
 -- Ouvrir et lire le fichier JSON
 local file = io.open(minetest.get_worldpath().."/geometry.dat", "r")
@@ -104,36 +88,54 @@ local function update_player_position(player)
         end)
         --minetest.chat_send_all(player:get_player_name() .. " se trouve à la position : " .. minetest.pos_to_string(position))
         --minetest.chat_send_all("yaw "..math.deg(player:get_look_horizontal()) .. " pitch " ..-math.deg(player:get_look_vertical()))
-        last_update_time[player] = minetest.get_gametime()
+        if deplacement_minetest == true then
+            last_update_time[player] = minetest.get_gametime()
+        end
     else
         print("L'API HTTP n'est pas disponible.")
     end
 end
 
--- Définition de l'item
-minetest.register_craftitem("modsitownsv0:mon_item", {
-    description = "iTowns", -- Description de l'item
-    inventory_image = "iTowns.png", -- Image de l'item (à remplacer par le nom de votre image)
-    on_use = function(itemstack, user, pointed_thing)
-        -- Inversion de l'état de deplacement_minetest
-        deplacement_minetest = not deplacement_minetest
-        
-        -- Envoi d'un message dans le chat pour indiquer le changement d'état
-        if deplacement_minetest then
-            minetest.chat_send_all("Déplacement Minetest activé.")
-        else
-            minetest.chat_send_all("Déplacement Minetest désactivé.")
-        end
-    end,
-})
+-- Fonction pour téléporter un joueur à une position spécifiée
+local function teleport_player(player)
+    if http then
+        local url = "http://127.0.0.1:3000/getDeplacementI"
+        local timeout = 10
+        http.fetch({
+            url = url,
+            timeout = timeout,
+            method = "GET",
+            headers = {
+                ["Content-Type"] = "application/json",
+            },
+        }, function(success)
+            if success then
+                local pos_itowns = minetest.parse_json(success.data) 
+                local x = pos_itowns.x
+                local y = pos_itowns.z
+                local z = pos_itowns.y
+                x = (x - cx) * echelle
+                y = (y + y0) * echelle
+                z = (z - cz) * echelle
+                if deplacement_minetest == false then
+                    last_update_time[player] = minetest.get_gametime()
+                    player:set_pos({x = x, y = y, z = z})
+                end
+            else
+                minestest.chat_send_all("La requête HTTP a échoué")
+            end
+        end)
+    end
+end
 
 -- Enregistrement de la fonction pour être appelée toutes les 10 secondes
 minetest.register_globalstep(function(dtime)
     -- Vérifier toutes les 10 secondes
-    if math.floor(minetest.get_gametime() % 1) == 0  and deplacement_minetest then
+    if math.floor(minetest.get_gametime() % 1) == 0 then
         -- Itérer sur tous les joueurs et mettre à jour leur position si suffisamment de temps s'est écoulé
         for _, player in ipairs(minetest.get_connected_players()) do
             if not last_update_time[player] or minetest.get_gametime() - last_update_time[player] >= 1 then
+                teleport_player(player)
                 update_player_position(player)
             end
         end
@@ -144,15 +146,6 @@ minetest.register_globalstep(function(dtime)
                 if minetest.get_gametime() - last_time >= 60 then
                     last_update_time[player] = nil
                 end
-            end
-        end
-    end
-    
-
-    if math.floor(minetest.get_gametime() % 5) == 0 then
-        for _, player in ipairs(minetest.get_connected_players()) do
-            if not last_update_time[player] or minetest.get_gametime() - last_update_time[player] >= 1 then
-                teleport_player(player:get_player_name())
             end
         end
     end

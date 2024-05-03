@@ -129,39 +129,54 @@ function chargerEtAfficherDonnees() {
             Ymin = data.ymin;
             Xmax = data.xmax;
             Ymax = data.ymax;
-
-            yaw =data.yaw*Math.PI/180;
-            pitch =data.pitch*Math.PI/180;
-            roll = 0;
-            rota = new THREE.Euler(yaw, pitch, roll, 'ZYX');
+            //on initie la rotation à 0,0,0
+            angx=0
+            angy=0
+            angz=0
+            
+            rota = new THREE.Euler(angx, angy, angz, 'XZY');
             view.camera3D.setRotationFromEuler(rota);
             
-            //on suppose qu'il faut tourner la caméra car on pointe sur la map quand on regarde l'horizon sur le jeu
-            view.camera3D.rotateX(Math.PI/2);
-            //view.camera3D.rotateY(Math.PI/2);
-            //view.camera3D.rotateZ(Math.PI/2);
-            
-            // cliquer pour voir la rotation dans la console
-            viewerDiv.addEventListener('click', function() {
-                // Code à exécuter lorsque l'événement de clic se produit
-                console.log(view.camera3D.position);
-                console.log(view.camera3D.rotation);
-            });
+            //on récupère l'AV et l'AH de Minetest
+            yaw =data.yaw * Math.PI/180;
+            pitch =data.pitch * Math.PI/180;
 
+            //calcul de la colatitude
+            teta = Math.PI/2 - pitch
+            
+            //calcul des dx,dy,dz pour un point à 1000m de la position avec la colatitude (teta) et la longitude (-yaw)
+            dy = Math.sin(teta)*Math.cos(yaw);
+            dx = -Math.sin(teta)*Math.sin(yaw);
+            dz = Math.cos(teta);
+            
+
+            //position dans Minetest
             posz = data.position.y;
             posx = data.position.x;
             posy = data.position.z;
-
+           
+            //position sur iTowns
             pospre = view.camera3D.position;
+            
+            //on calcule la différence en x,y,z entre iTowns et Minetest (translation)
             tranx = posx - pospre.x;
             trany = posy - pospre.y;
             tranz = posz - pospre.z;
             
+            //la nouvelle position est l'ancienne + la translation
             tran = new THREE.Vector3(tranx, trany, tranz);
+            view.camera3D.position.addVectors(pospre, tran);
             
-            if (deplacement_minetest==true)
-                view.camera3D.position.addVectors(pospre, tran);
-                view.notifyChange(view.camera3D)    
+            //on récupère les nouvelles positions
+            x = view.camera3D.position.x;
+            y = view.camera3D.position.y;
+            z = view.camera3D.position.z;
+
+            //on dit à la caméra de regarder notre pointeur (même visée que sur minetest)
+            view.camera3D.lookAt(x + dx, y + dy, z + dz);
+            
+            //on update la vue avec la nouvelle position et rotation
+            view.notifyChange(view.camera3D)      
         })
         .catch(error => {
             console.error('Erreur lors de la lecture du fichier JSON:', error);
