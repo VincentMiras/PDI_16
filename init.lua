@@ -59,10 +59,10 @@ if file then
     -- Analyser le contenu JSON
     local data = json_decode(content)
     echelle = data.echelle
-    zcno = data.coordinatesCarto[1][1]
-    xcno = data.coordinatesCarto[1][2]
-    zcse = data.coordinatesCarto[3][1]
-    xcse = data.coordinatesCarto[3][2]
+    xcno = data.coordinatesCarto[1][1]
+    zcno = data.coordinatesCarto[1][2]
+    xcse = data.coordinatesCarto[3][1]
+    zcse = data.coordinatesCarto[3][2]
     y0 = data.altitudeZero
     cx = (xcno+xcse)/2
     cz = (zcno+zcse)/2
@@ -87,8 +87,8 @@ local function update_player_position(player)
         pitch = pitch,
         xmin = xcno,
         xmax = xcse,
-        ymin = zcno,
-        ymax = zcse
+        ymax = zcno,
+        ymin = zcse
     }
     
     if http then

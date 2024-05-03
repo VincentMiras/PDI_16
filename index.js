@@ -13,6 +13,9 @@ let Xmax = 0;
 let Ymin = 0;
 let Ymax = 0;
 
+let viewExtent;
+let view;
+
 function prendreEmprise() {
     fetch('http://127.0.0.1:3000/getDeplacementM')
         .then(response => response.json())
@@ -22,14 +25,61 @@ function prendreEmprise() {
             Ymin = data.ymin;
             Xmax = data.xmax;
             Ymax = data.ymax;
-            console.log(Xmin,Xmax,Ymin,Ymax);
-            
+            console.log(Xmin, Xmax, Ymin, Ymax);
+
+            // Créer viewExtent une seule fois avec les données récupérées
+            viewExtent = new itowns.Extent(
+                'EPSG:2154',
+                Xmin, Xmax,
+                Ymin, Ymax  
+            );
+
+            // Reste du code pour la création de la vue itowns
+            const placement = {
+                coord: viewExtent.center(),
+                tilt: 45,
+                heading: 90,
+                range: 1500,
+            };
+
+            // Create the planar view
+            view = new itowns.PlanarView(viewerDiv, viewExtent, {
+                placement: placement,
+            });
+
+            // Define the source of the ortho-images
+            const sourceOrtho = new itowns.WMSSource({
+                url: "https://data.geopf.fr/wms-r",
+                name: "OI.OrthoimageCoverage.HR",
+                format: "image/png",
+                crs: 'EPSG:2154',
+                extent: viewExtent,
+            });
+            // Create the ortho-images ColorLayer and add it to the view
+            const layerOrtho = new itowns.ColorLayer('Ortho', { source: sourceOrtho });
+            view.addLayer(layerOrtho);
+
+            // Define the source of the dem data
+            const sourceDEM = new itowns.WMSSource({
+                url: "https://data.geopf.fr/wms-r",
+                name: "ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES",
+                // name: "RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS",
+                format: "image/x-bil;bits=32",
+                crs: 'EPSG:2154',
+                extent: viewExtent,
+            });
+            // Create the dem ElevationLayer and add it to the view
+            const layerDEM = new itowns.ElevationLayer('DEM', { source: sourceDEM });
+            view.addLayer(layerDEM);
+
+            // Autres configurations de vue, création de couches, etc.
         })
         .catch(error => {
             console.error('Erreur lors de la création de la carte:', error);
         });
 }
 
+// Appeler la fonction prendreEmprise une seule fois pour initialiser la vue
 prendreEmprise();
 
 
@@ -37,50 +87,6 @@ prendreEmprise();
 // attendre prendreEmprise()
 setTimeout(() => {
     console.log(Xmin, Xmax, Ymin, Ymax);
-
-    viewExtent = new itowns.Extent(
-        'EPSG:2154',
-        Xmax, Xmin,
-        Ymin, Ymax
-    );
-
-// Define the camera initial placement
-const placement = {
-    coord: viewExtent.center(),
-    tilt: 45,
-    heading: 90,
-    range: 1500,
-};
-
-// Create the planar view
-const view = new itowns.PlanarView(viewerDiv, viewExtent, {
-    placement: placement,
-});
-
-// Define the source of the ortho-images
-const sourceOrtho = new itowns.WMSSource({
-    url: "https://data.geopf.fr/wms-r",
-    name: "OI.OrthoimageCoverage.HR",
-    format: "image/png",
-    crs: 'EPSG:2154',
-    extent: viewExtent,
-});
-// Create the ortho-images ColorLayer and add it to the view
-const layerOrtho = new itowns.ColorLayer('Ortho', { source: sourceOrtho });
-view.addLayer(layerOrtho);
-
-// Define the source of the dem data
-const sourceDEM = new itowns.WMSSource({
-    url: "https://data.geopf.fr/wms-r",
-    name: "ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES",
-    // name: "RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS",
-    format: "image/x-bil;bits=32",
-    crs: 'EPSG:2154',
-    extent: viewExtent,
-});
-// Create the dem ElevationLayer and add it to the view
-const layerDEM = new itowns.ElevationLayer('DEM', { source: sourceDEM });
-view.addLayer(layerDEM);
 
 // Fonction pour charger et afficher les données du fichier JSON
 function chargerEtAfficherDonnees() {
@@ -97,7 +103,7 @@ function chargerEtAfficherDonnees() {
 
             yaw =data.yaw*Math.PI/180;
             pitch =data.pitch*Math.PI/180;
-            roll = 0;
+            roll = 180;
             rota = new THREE.Euler(yaw, pitch, roll, 'ZYX');
             view.camera3D.setRotationFromEuler(rota);
             
