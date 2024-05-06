@@ -23,6 +23,7 @@ function extrudeBuildings(properties) {
 function altitudeBuildings(properties) {
     return properties.altitude_minimale_sol;
 }
+
 function prendreEmprise() {
     fetch('http://127.0.0.1:3000/getDeplacementM')
         .then(response => response.json())
@@ -48,7 +49,6 @@ function prendreEmprise() {
                 heading: 90,
                 range: 1500,
             };
-
             // Create the planar view
             view = new itowns.PlanarView(viewerDiv, viewExtent, {
                 placement: placement,
@@ -104,6 +104,7 @@ function prendreEmprise() {
             view.addLayer(geometryLayer);
 
             // Autres configurations de vue, création de couches, etc.
+
         })
         .catch(error => {
             console.error('Erreur lors de la création de la carte:', error);
@@ -112,7 +113,6 @@ function prendreEmprise() {
 
 // Appeler la fonction prendreEmprise une seule fois pour initialiser la vue
 prendreEmprise();
-
 
 
 // attendre prendreEmprise()
@@ -130,12 +130,12 @@ function chargerEtAfficherDonnees() {
             Xmax = data.xmax;
             Ymax = data.ymax;
             //on initie la rotation à 0,0,0
-            angx=0
-            angy=0
-            angz=0
+            // angx=0
+            // angy=0
+            // angz=0
             
-            rota = new THREE.Euler(angx, angy, angz, 'XZY');
-            view.camera3D.setRotationFromEuler(rota);
+            // rota = new THREE.Euler(angx, angy, angz, 'XZY');
+            // view.camera3D.setRotationFromEuler(rota);
             
             //on récupère l'AV et l'AH de Minetest
             yaw =data.yaw * Math.PI/180;
@@ -163,20 +163,22 @@ function chargerEtAfficherDonnees() {
             trany = posy - pospre.y;
             tranz = posz - pospre.z;
             
-            //la nouvelle position est l'ancienne + la translation
-            tran = new THREE.Vector3(tranx, trany, tranz);
-            view.camera3D.position.addVectors(pospre, tran);
-            
             //on récupère les nouvelles positions
             x = view.camera3D.position.x;
             y = view.camera3D.position.y;
             z = view.camera3D.position.z;
 
-            //on dit à la caméra de regarder notre pointeur (même visée que sur minetest)
-            view.camera3D.lookAt(x + dx, y + dy, z + dz);
-            
-            //on update la vue avec la nouvelle position et rotation
-            view.notifyChange(view.camera3D)      
+            if (deplacement_minetest == true) {
+                //la nouvelle position est l'ancienne + la translation
+                tran = new THREE.Vector3(tranx, trany, tranz);
+                view.camera3D.position.addVectors(pospre, tran);
+
+                //on dit à la caméra de regarder notre pointeur (même visée que sur minetest)
+                view.camera3D.lookAt(x + dx, y + dy, z + dz);
+
+                //on update la vue avec la nouvelle position et rotation
+                view.notifyChange(view.camera3D)      
+            }
         })
         .catch(error => {
             console.error('Erreur lors de la lecture du fichier JSON:', error);
@@ -192,11 +194,25 @@ setInterval(chargerEtAfficherDonnees, 100);
     
 // Fonction pour charger et afficher les données du fichier JSON en utilisant une requête POST
 function posterDonnees() {
+
+    yaw_b=view.camera3D.rotation.y
+
+    // tetab = Math.acos(dzb);
+
+    // // Calcul de pitch
+    // pitchb = Math.PI / 2 - tetab;
+
+    // // Conversion de yaw et pitch en degrés
+    yaw_b *= 180 / Math.PI;
+    // pitchb *= 180 / Math.PI;
+
     // Configurer les données à envoyer dans la requête POST
     const pData = {
         x:view.camera3D.position.x,
         y:view.camera3D.position.y,
-        z:view.camera3D.position.z
+        z:view.camera3D.position.z,
+        yaw:yaw_b
+
     };
 
     // Configuration de la requête fetch avec la méthode POST et les données
