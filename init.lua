@@ -88,7 +88,6 @@ local function update_player_position(player)
         end)
         --minetest.chat_send_all(player:get_player_name() .. " se trouve à la position : " .. minetest.pos_to_string(position))
         --minetest.chat_send_all("yaw "..math.deg(player:get_look_horizontal()) .. " pitch " ..-math.deg(player:get_look_vertical()))
-        minetest.chat_send_all(minetest.write_json(deplacement_minetest))
         if deplacement_minetest == true then
             last_update_time[player] = minetest.get_gametime()
         end
@@ -116,13 +115,18 @@ local function teleport_player(player)
                 local y = pos_itowns.z
                 local z = pos_itowns.y
                 local yaw = pos_itowns.yaw
+                if yaw == nil then 
+                    yaw=0
+                else 
+                    yaw = pos_itowns.yaw
+                end
                 x = (x - cx) * echelle
                 y = (y + y0) * echelle
                 z = (z - cz) * echelle
                 if deplacement_minetest == false then
                     last_update_time[player] = minetest.get_gametime()
                     player:set_pos({x = x, y = y, z = z})
-                    -- player:set_look_yaw(yaw)
+                    player:set_look_yaw(yaw)
                 end
             else
                 minestest.chat_send_all("La requête HTTP a échoué")
