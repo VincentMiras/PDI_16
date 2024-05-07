@@ -203,7 +203,7 @@ function posterDonnees() {
     // pitchb = Math.PI / 2 - tetab;
 
     // // Conversion de yaw et pitch en degrés
-    yaw_b *= 180 / Math.PI;
+    yaw_b =yaw_b* 180 / Math.PI;
     // pitchb *= 180 / Math.PI;
 
     // Configurer les données à envoyer dans la requête POST
