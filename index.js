@@ -196,22 +196,22 @@ setInterval(chargerEtAfficherDonnees, 100);
 function posterDonnees() {
 
     yaw_b=view.camera3D.rotation.y
-
-    // tetab = Math.acos(dzb);
-
-    // // Calcul de pitch
-    // pitchb = Math.PI / 2 - tetab;
+    r_x = view.camera3D.rotation.x
+    r_z = view.camera3D.rotation.z
+    test=view.camera3D.rotation
 
     // // Conversion de yaw et pitch en degrés
-    yaw_b =yaw_b* 180 / Math.PI;
-    // pitchb *= 180 / Math.PI;
+    pitch_b=(r_x+r_z)-Math.PI/2
+    yaw_b =yaw_b+Math.PI
+    console.log(test)
 
     // Configurer les données à envoyer dans la requête POST
     const pData = {
         x:view.camera3D.position.x,
         y:view.camera3D.position.y,
         z:view.camera3D.position.z,
-        yaw:yaw_b
+        yaw:yaw_b,
+        pitch:pitch_b
 
     };
 

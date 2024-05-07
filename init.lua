@@ -115,8 +115,12 @@ local function teleport_player(player)
                 local y = pos_itowns.z
                 local z = pos_itowns.y
                 local yawi = pos_itowns.yaw
+                local pitchi=pos_itowns.pitch
                 if yawi == nil then 
                     yawi=0
+                end
+                if pitchi == nil then 
+                    pitchi=0
                 end
                 x = (x - cx) * echelle
                 y = (y + y0) * echelle
@@ -124,7 +128,8 @@ local function teleport_player(player)
                 if deplacement_minetest == false then
                     last_update_time[player] = minetest.get_gametime()
                     player:set_pos({x = x, y = y, z = z})
-                    player:set_look_yaw(yawi)
+                    player:set_look_horizontal(yawi)
+                    player:set_look_vertical(pitchi)
                 end
             else
                 minestest.chat_send_all("La requête HTTP a échoué")
