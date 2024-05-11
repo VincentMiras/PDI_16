@@ -109,7 +109,7 @@ local function teleport_player(player)
                 ["Content-Type"] = "application/json",
             },
         }, function(success)
-            if success then
+            if minetest.parse_json(success.data) ~= nil then
                 local pos_itowns = minetest.parse_json(success.data) 
                 local x = pos_itowns.x
                 local y = pos_itowns.z
@@ -132,7 +132,7 @@ local function teleport_player(player)
                     player:set_look_vertical(pitchi)
                 end
             else
-                minestest.chat_send_all("La requête HTTP a échoué")
+                minetest.chat_send_all("La requête HTTP a échoué")
             end
         end)
     end
