@@ -190,28 +190,45 @@ chargerEtAfficherDonnees();
 // Mettre à jour automatiquement les données toutes les 100 msecondes
 setInterval(chargerEtAfficherDonnees, 100);
 
-
     
 // Fonction pour charger et afficher les données du fichier JSON en utilisant une requête POST
 function posterDonnees() {
 
-    yaw_b=view.camera3D.rotation.y
+    r_y=view.camera3D.rotation.y
     r_x = view.camera3D.rotation.x
     r_z = view.camera3D.rotation.z
-    test=view.camera3D.rotation
 
-    // // Conversion de yaw et pitch en degrés
-    pitch_b=(r_x+r_z)-Math.PI/2
-    yaw_b =yaw_b+Math.PI
-    console.log(test)
+    matrix = new THREE.Matrix4();
+                
+    //construction matrice de rotation depuis la rotation d'Euler de camera3D
+    matrix.makeRotationFromEuler(new THREE.Euler(r_x, r_y, r_z, 'XYZ'));
+                
+    dV = new THREE.Vector3(0, 0, -1); //iniation perpendiculaire au sol (arbitraire)
+
+    //on obtient le vecteur de la direction
+    dV.applyMatrix4(matrix);
+                
+
+    //calcul du pitch
+    teta_inv = Math.acos(dV.z)
+    pitch_inv = -(Math.PI/2 - teta_inv);
+
+    //calcul du yaw
+                 
+    phi_inv = Math.acos(dV.y/Math.sqrt(dV.x*dV.x+dV.y*dV.y));
+    yaw_inv = phi_inv
+
+    if (dV.x > 0){
+        yaw_inv = 2*Math.PI - phi_inv
+    }
 
     // Configurer les données à envoyer dans la requête POST
     const pData = {
         x:view.camera3D.position.x,
         y:view.camera3D.position.y,
         z:view.camera3D.position.z,
-        yaw:yaw_b,
-        pitch:pitch_b
+        yaw:yaw_inv,
+        pitch:pitch_inv
 
     };
 
@@ -224,13 +241,6 @@ function posterDonnees() {
         mode: 'no-cors',
         body: JSON.stringify(pData) // Convertir les données en format JSON pour le corps de la requête
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Données JSON post sur le serveur :', data);
-    })
-    .catch(error => {
-        console.error('Erreur lors du post du fichier JSON:', error);
-    });
 }
 
 // Modification des données dans le serveur
