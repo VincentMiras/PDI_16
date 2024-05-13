@@ -8,13 +8,15 @@ Ce guide vous aidera à installer Minetest, à télécharger et installer des mo
 
 - Au lancement du jeu, chercher "Minetest Game" puis l'installer.
 
+- Fermer le jeu.
+
+## Configuration des mods
+
 - Dans les dossiers du jeu, rendez-vous dans le répertoire `mods`.
 
 - Créez un dossier portant le nom du mod que vous voulez créer (ex: MineTowns).
 
 - Collez à l’intérieur de ce dossier le fichier contenant le code en Lua et le fichier `.conf`.
-
-## Configuration des mods
 
 - Lancez le jeu Minetest.
 
