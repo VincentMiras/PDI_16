@@ -30,6 +30,8 @@ Ce guide vous aidera à installer Minetest, à télécharger et installer des mo
 
 - Dans la case « Mods de confiance », remplissez avec le nom du dossier que vous avez créé à l’étape précédente puis cliquez sur « Définir ».
 
+- Depuis le menu principal, créez un monde quelconque.
+
 - Fermez le jeu.
 
 ## Génération de la carte
