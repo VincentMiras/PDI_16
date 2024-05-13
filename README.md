@@ -18,6 +18,8 @@ Ce guide vous aidera à installer Minetest, à télécharger et installer des mo
 
 - Collez à l’intérieur de ce dossier le fichier contenant le code en Lua et le fichier `.conf`.
 
+- Dans le dossier `textures`, puis `base`, puis `pack`, collez le fichier image de l’objet iTowns.
+
 - Lancez le jeu Minetest.
 
 - Ouvrez les paramètres du jeu avec l’icône d’engrenages en haut à droite du menu.
@@ -45,8 +47,6 @@ Ce guide vous aidera à installer Minetest, à télécharger et installer des mo
 - Sortez le dossier du dossier parent afin que Minetest détecte la carte.
 
 ## Configuration de iTowns
-
-- Dans le dossier `textures`, puis `base`, puis `pack`, collez le fichier image de l’objet iTowns.
 
 - Installez iTowns en clonant le git suivant : [itowns-starter-webpack](https://github.com/Desplandis/itowns-starter-webpack).
 
