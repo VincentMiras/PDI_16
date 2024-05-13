@@ -247,5 +247,5 @@ function posterDonnees() {
 posterDonnees();
 
 // Mettre à jour automatiquement les données toutes les 5 secondes
-setInterval(posterDonnees, 3000);
+setInterval(posterDonnees, 100);
 }, 100);
