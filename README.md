@@ -14,9 +14,7 @@ Ce guide vous aidera à installer Minetest, à télécharger et installer des mo
 
 - Dans les dossiers du jeu, rendez-vous dans le répertoire `mods`.
 
-- Créez un dossier portant le nom du mod que vous voulez créer (ex: MineTowns).
-
-- Collez à l’intérieur de ce dossier le fichier contenant le code en Lua et le fichier `.conf`.
+- Collez le fichier `moditownsv0` dans ce répertoire.
 
 - Dans le dossier `textures`, puis `base`, puis `pack`, collez le fichier image de l’objet iTowns.
 
