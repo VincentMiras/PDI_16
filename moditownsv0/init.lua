@@ -11,9 +11,9 @@ end
 local http = minetest.request_http_api()
 
 -- Définition de l'item
-minetest.register_craftitem("modsitownsv0:mon_item", {
+minetest.register_craftitem("moditownsv0:mon_item", {
     description = "iTowns", -- Description de l'item
-    inventory_image = "iTowns.png", -- Image de l'item (à remplacer par le nom de votre image)
+    inventory_image = "itowns.png", -- Image de l'item (à remplacer par le nom de votre image)
     on_use = function(itemstack, user, pointed_thing)
         -- Inversion de l'état de deplacement_minetest
         deplacement_minetest = not deplacement_minetest
