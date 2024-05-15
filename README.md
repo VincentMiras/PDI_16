@@ -81,3 +81,5 @@ Ce guide vous aidera à installer Minetest, à télécharger et installer des mo
 - Lorsque le déplacement de Minetest est désactivé, vous pouvez vous déplacer dans iTowns.
 
 - Si vous désirez changer de carte, assurez vous d'activer le déplacement sur Minetest. Quittez le monde et lancez celui que vous souhaitez comme précédemment. Raffraichissez la page internet `iTowns` pour afficher la vue.
+
+-**ATTENTION** Le mod peut se désactiver lors de l'ajout de nouvelles cartes. Assurez vous que le mod soit bien actif pour que la liaison soit effective.
