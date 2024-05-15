@@ -1,4 +1,4 @@
-# Guide d'installation et d'utilisation
+# Guide d'installation
 
 Ce guide vous aidera à installer Minetest, à télécharger et installer des mods, ainsi qu'à configurer votre environnement pour profiter pleinement de votre expérience de jeu.
 
@@ -56,19 +56,28 @@ Ce guide vous aidera à installer Minetest, à télécharger et installer des mo
 
 - Téléchargez les bibliothèques Node et Three.
 
-## Lancement du serveur
+## Lancement du service
 
+- Lancez le serveur à l’aide d’un invite de commande (ex: invite de commande Windows, rendez-vous à l’emplacement du fichier puis exécutez « node serveur.cjs »).
+  
 - Lancez le jeu Minetest.
 
 - Dans l’onglet « Sélectionner les mods », activez le mod que vous avez créé et sauvegardez.
 
-- Lancez le serveur à l’aide d’un invite de commande (ex: invite de commande Windows, rendez-vous à l’emplacement du fichier puis exécutez « node serveur.js »).
-
-## Utilisation de iTowns
-
 - Ouvrez le fichier index.HTML correspondant à la fenêtre iTowns dans le dossier `public`.
 
-- L’objet nommé « iTowns » dans le jeu Minetest correspond au sens de déplacement autorisé par le mod. En fonction de quel sens est activé, il est possible de se déplacer dans Minetest ou dans iTowns.
+- Sélectionnez une carte sur Minetest et cliquer sur `jouer`.
 
-- Vous pouvez vous déplacer comme bon vous semble dans un sens ou dans l’autre afin de découvrir au mieux la zone que vous souhaitez.
+- Raffraichissez la page internet `iTowns` pour afficher la vue.
 
+# Guide d'utilisation
+
+- Par défaut, vous pouvez vous déplacer sur Minetest.
+
+- Récupérez l'objet iTowns en le cherchant dans l'inventaire (appuyez sur la touche `i` pour ouvrir l'inventaire).
+
+- L’objet nommé « iTowns » dans le jeu Minetest change le sens de déplacement autorisé par le mod. Faites un clic gauche avec l'objet en main pour changer le sens de déplacement.
+
+- Lorsque le déplacement de Minetest est désactivé, vous pouvez vous déplacer dans iTowns.
+
+- Si vous désirez changer de carte, assurez vous d'activer le déplacement sur Minetest. Quittez le monde et lancez celui que vous souhaitez comme précédemment. Raffraichissez la page internet `iTowns` pour afficher la vue.
