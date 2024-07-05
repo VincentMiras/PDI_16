@@ -122,9 +122,9 @@ local function teleport_player(player)
                 if pitchi == nil then 
                     pitchi=0
                 end
-                x = (x - cx) * echelle
-                y = (y + y0) * echelle
-                z = (z - cz) * echelle
+                x = (x - cx) * echelle -- * ou / à déterminer
+                y = (y + y0) * echelle -- * ou / à déterminer
+                z = (z - cz) * echelle -- * ou / à déterminer
                 if deplacement_minetest == false then
                     last_update_time[player] = minetest.get_gametime()
                     player:set_pos({x = x, y = y, z = z})
@@ -151,9 +151,9 @@ minetest.register_globalstep(function(dtime)
         end
 
         -- Nettoyer la liste des derniers temps de mise à jour
-        if math.floor(minetest.get_gametime() % 60) == 0 then
+        if math.floor(minetest.get_gametime() % 15) == 0 then -- passage de 60 à 15 pour réduire la taille de la liste de sauvegarde
             for player, last_time in pairs(last_update_time) do
-                if minetest.get_gametime() - last_time >= 60 then
+                if minetest.get_gametime() - last_time >= 15 then -- passage de 60 à 15 pour réduire la taille de la liste de sauvegarde
                     last_update_time[player] = nil
                 end
             end
